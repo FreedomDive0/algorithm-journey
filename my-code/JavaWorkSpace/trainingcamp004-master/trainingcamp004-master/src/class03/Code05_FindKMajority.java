@@ -1,0 +1,170 @@
+package class03;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map.Entry;
+
+public class Code05_FindKMajority {
+
+	public static void printHalfMajor(int[] arr) {
+		int cand = 0;
+		int HP = 0;
+		for (int i = 0; i < arr.length; i++) {
+			if (HP == 0) {
+				cand = arr[i];
+				HP = 1;
+			} else if (arr[i] == cand) {
+				HP++;
+			} else {
+				HP--;
+			}
+		}
+		if (HP == 0) {
+			System.out.println("no such number.");
+			return;
+		}
+		HP = 0;
+		for (int i = 0; i < arr.length; i++) {
+			if (arr[i] == cand) {
+				HP++;
+			}
+		}
+		if (HP > arr.length / 2) {
+			System.out.println(cand);
+		} else {
+			System.out.println("no such number.");
+		}
+	}
+
+	public static void printKMajor(int[] arr, int K) {
+		if (K < 2) {
+			System.out.println("the value of K is invalid.");
+			return;
+		}
+		HashMap<Integer, Integer> cands = new HashMap<Integer, Integer>();
+		for (int i = 0; i != arr.length; i++) {
+			if (cands.containsKey(arr[i])) {
+				cands.put(arr[i], cands.get(arr[i]) + 1);
+			} else {
+				if (cands.size() == K - 1) {
+					allCandsMinusOne(cands);
+				} else {
+					cands.put(arr[i], 1);
+				}
+			}
+		}
+		HashMap<Integer, Integer> reals = getReals(arr, cands);
+		boolean hasPrint = false;
+		for (Entry<Integer, Integer> set : cands.entrySet()) {
+			Integer key = set.getKey();
+			if (reals.get(key) > arr.length / K) {
+				hasPrint = true;
+				System.out.print(key + " ");
+			}
+		}
+		System.out.println(hasPrint ? "" : "no such number.");
+	}
+
+	public static void allCandsMinusOne(HashMap<Integer, Integer> map) {
+		List<Integer> removeList = new LinkedList<Integer>();
+		for (Entry<Integer, Integer> set : map.entrySet()) {
+			Integer key = set.getKey();
+			Integer value = set.getValue();
+			if (value == 1) {
+				removeList.add(key);
+			}
+			map.put(key, value - 1);
+		}
+		for (Integer removeKey : removeList) {
+			map.remove(removeKey);
+		}
+	}
+
+	public static HashMap<Integer, Integer> getReals(int[] arr, HashMap<Integer, Integer> cands) {
+		HashMap<Integer, Integer> reals = new HashMap<Integer, Integer>();
+		for (int i = 0; i != arr.length; i++) {
+			int curNum = arr[i];
+			if (cands.containsKey(curNum)) {
+				if (reals.containsKey(curNum)) {
+					reals.put(curNum, reals.get(curNum) + 1);
+				} else {
+					reals.put(curNum, 1);
+				}
+			}
+		}
+		return reals;
+	}
+
+	// 测试
+	// 5.2 arr[] 给定整数K arr长度为N 如果某些数出现超过了N/K 打印这些数
+	public static void FindKMajority(int[] arr, int k) {
+		if (arr == null || arr.length < k || arr.length < 1 || k < 2) {
+			return;
+		}
+		HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
+		for (int i = 0; i < arr.length; i++) {
+			if (map.containsKey(arr[i])) {
+				map.put(arr[i], map.get(arr[i]) + 1);
+			} else {
+				if (map.size() == k - 1) {
+					allSubOne(map);
+				} else {
+					map.put(arr[i], 1);
+				}
+			}
+		}
+		HashMap<Integer, Integer> real = getReals(map, arr);
+		boolean hasNumber = false;
+		for (Entry<Integer, Integer> entry : real.entrySet()) {
+			if (entry.getValue() > (arr.length / k)) {
+				hasNumber = true;
+				System.out.print(entry.getKey() + " " + entry.getValue());
+				System.out.println();
+			}
+		}
+		System.out.println(hasNumber ? "" : "No Such Number");
+	}
+
+	public static void allSubOne(HashMap<Integer, Integer> map) {
+		ArrayList<Integer> removeList = new ArrayList<Integer>();
+		for (Entry<Integer, Integer> entry : map.entrySet()) {
+			int key = entry.getKey();
+			int value = entry.getValue();
+			if (value == 1) {
+				removeList.add(entry.getKey());
+			} else {
+				map.put(key, value - 1);
+			}
+		}
+		for (Integer key : removeList) {
+			map.remove(key);
+		}
+	}
+
+	public static HashMap<Integer, Integer> getReals(HashMap<Integer, Integer> map, int[] arr) {
+		HashMap<Integer, Integer> real = new HashMap<Integer, Integer>();
+		for (int i = 0; i < arr.length; i++) {
+			int curNum = arr[i];
+			if (map.containsKey(curNum)) {
+				if (real.containsKey(curNum)) {
+					real.put(curNum, real.get(curNum) + 1);
+				} else {
+					real.put(curNum, 1);
+				}
+			}
+		}
+		return real;
+	}
+
+	public static void main(String[] args) {
+		int[] arr = { 1, 2, 3, 1, 1, 2, 1, 2 };
+//		moreThanHalf(arr);
+		printHalfMajor(arr);
+		int K = 4;
+		printKMajor(arr, K);
+		FindKMajority(arr, K);
+	}
+
+}

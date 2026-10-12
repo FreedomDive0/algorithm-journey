@@ -1,0 +1,55 @@
+package class01;
+
+public class Code04_ColorLeftRight {
+
+	// RGRGR -> RRRGG
+	public static int minPaint(String s) {
+		if (s == null || s.length() < 2) {
+			return 0;
+		}
+		char[] str = s.toCharArray();
+		int N = str.length;
+		int rAll = 0;
+		for (int i = 0; i < N; i++) {
+			rAll += str[i] == 'R' ? 1 : 0;
+		}
+		int ans = rAll; // 如果数组所有的范围，都是右侧范围，都变成G
+		int left = 0;
+		for (int i = 0; i < N - 1; i++) { // 0..i 左侧 n-1..N-1
+			left += str[i] == 'G' ? 1 : 0;
+			rAll -= str[i] == 'R' ? 1 : 0;
+			ans = Math.min(ans, left + rAll);
+		}
+		// 0...N-1 左全部 右无
+		ans = Math.min(ans, left + (str[N - 1] == 'G' ? 1 : 0));
+		return ans;
+	}
+
+	// 测试
+	public static int minRedPlusGreen(String s) {
+		if (s == null || s.length() < 1) {
+			return 0;
+		}
+		int N = s.length();
+		char[] str = s.toCharArray();
+		int red = 0;// 分界线右侧的红色数量
+		for (int i = 0; i < N; i++) {
+			red += str[i] == 'R' ? 1 : 0;
+		}
+		int ans = red;
+		int green = 0;
+		for (int i = 0; i < N; i++) {
+			red -= str[i] == 'R' ? 1 : 0;
+			green += str[i] == 'G' ? 1 : 0;
+			ans = Math.min(ans, red + green);
+		}
+		return ans;
+	}
+
+	public static void main(String[] args) {
+		String test = "GGRGGRRRRGGGGGRR";
+		System.out.println(minPaint(test));
+		System.out.println(minPaint(test));
+	}
+
+}
